@@ -28,14 +28,13 @@ export default function UserSearchDropdown() {
   }, [query]);
 
   return (
-    <div className="relative p-4 w-full max-w-md">
+    <div>
       <input
         ref={inputRef}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length && setShowDropdown(true)}
-        onBlur={() => setTimeout(() => setShowDropdown(false), 150)} // delay hides menu AFTER a click
-        className="w-full border px-3 py-2 rounded shadow-sm"
+        onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
         placeholder="Search users..."
         aria-autocomplete="list"
         aria-controls="user-search-dropdown"
@@ -44,19 +43,14 @@ export default function UserSearchDropdown() {
       />
 
       {showDropdown && results.length > 0 && (
-        <ul
-          id="user-search-dropdown"
-          role="listbox"
-          className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow-md max-h-60 overflow-auto"
-        >
+        <ul id="user-search-dropdown" role="listbox">
           {results.map((user: any, index: number) => (
             <li
               key={user.id}
               role="option"
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
               onMouseDown={() => {
-                setQuery(user.name); // populate input with selected user
-                setShowDropdown(false); // close menu
+                setQuery(user.name);
+                setShowDropdown(false);
               }}
             >
               {user.name}
