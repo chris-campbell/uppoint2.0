@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Logo from "@/assets/logo.svg";
-import { Button } from "./button";
+import { Button } from "../elements/button";
 import { getFirstName } from "@/lib/user";
 import { Session } from "next-auth";
 

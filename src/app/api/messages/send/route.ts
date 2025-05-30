@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import Pusher from "pusher";
 import { auth } from "../../../../../auth";
-import { json } from "stream/consumers";
 import { prisma } from "@/lib/prisma";
 
 const pusher = new Pusher({
@@ -13,33 +12,36 @@ const pusher = new Pusher({
 });
 
 export async function POST(req: Request) {
-  // const { message } = await request.json();
-
-  const { content, recipient, recipientId } = await req.json();
+  const { content, recipientId } = await req.json();
 
   const session = await auth();
 
+  if (!session?.user?.email) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
   const sender = await prisma.user.findUnique({
-    where: { email: session?.user?.email },
+    where: { email: session.user.email },
   });
 
   if (!sender) {
-    return new Response("Sender not found", { status: 401 });
+    return new Response("Sender not found", { status: 404 });
   }
 
   const message = await prisma.message.create({
     data: {
-      content: content,
+      content,
       senderId: sender.id,
-      recipientId: recipientId,
-      recipient: recipient,
+      recipientId,
     },
   });
 
-  await pusher.trigger(`private-member-${recipientId}`, "new-member", {
+  // Trigger Pusher event to recipient
+  await pusher.trigger(`private-user-${recipientId}`, "new-message", {
     id: message.id,
-    text: content,
+    content: message.content,
     senderId: sender.id,
+    recipientId,
     createdAt: message.createdAt,
   });
 
