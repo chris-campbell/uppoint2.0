@@ -77,11 +77,3 @@ model Message {
   @@index([recipientId])
   @@index([senderId])
 }
-
-
-enum AlertType {
-  INFO
-  WARNING
-  ERROR
-  SUCCESS
-}
